@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - จัดการคำสั่งซื้อเสื้อ</title>
+    <link rel="stylesheet" href="admin-style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🛠️ Admin Panel - จัดการคำสั่งซื้อ</h1>
+            <button id="refreshBtn" class="refresh-btn">🔄 รีเฟรชข้อมูล</button>
+        </header>
+
+        <div class="stats-section">
+            <div class="stat-card">
+                <h3>ออเดอร์ทั้งหมด</h3>
+                <span id="totalOrders">0</span>
+            </div>
+            <div class="stat-card">
+                <h3>รอชำระเงิน</h3>
+                <span id="pendingOrders">0</span>
+            </div>
+            <div class="stat-card">
+                <h3>ชำระแล้ว</h3>
+                <span id="paidOrders">0</span>
+            </div>
+            <div class="stat-card">
+                <h3>ยอดรวมทั้งหมด</h3>
+                <span id="totalQuantity">0 ตัว</span>
+            </div>
+        </div>
+
+        <div class="shirt-stats-section">
+            <h3>📊 ยอดสั่งซื้อแต่ละแบบ</h3>
+            <div id="shirtStats" class="shirt-stats-grid"></div>
+        </div>
+
+        <div class="filters">
+            <select id="statusFilter">
+                <option value="">ทุกสถานะ</option>
+                <option value="รอชำระเงิน">รอชำระเงิน</option>
+                <option value="ชำระแล้ว">ชำระแล้ว</option>
+                <option value="ยกเลิก">ยกเลิก</option>
+            </select>
+            <input type="text" id="searchCustomer" placeholder="ค้นหาชื่อลูกค้า...">
+        </div>
+
+        <div id="loading" class="loading">กำลังโหลดข้อมูล...</div>
+        
+        <div id="ordersContainer" class="orders-container"></div>
+    </div>
+
+    <!-- Modal สำหรับอัพเดทสถานะ -->
+    <div id="updateModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>อัพเดทสถานะการชำระเงิน</h2>
+            
+            <div class="modal-body">
+                <div class="order-info">
+                    <h3>ข้อมูลออเดอร์</h3>
+                    <div id="modalOrderInfo"></div>
+                </div>
+
+                <div class="status-update">
+                    <label for="paymentStatus">สถานะการชำระเงิน:</label>
+                    <select id="paymentStatus">
+                        <option value="รอชำระเงิน">รอชำระเงิน</option>
+                        <option value="ชำระแล้ว">ชำระแล้ว</option>
+                        <option value="ยกเลิก">ยกเลิก</option>
+                    </select>
+                </div>
+
+                <div class="evidence-upload">
+                    <label for="evidenceFile">แนบหลักฐานการชำระเงิน:</label>
+                    <input type="file" id="evidenceFile" accept="image/*,.pdf">
+                    <div id="currentEvidence"></div>
+                </div>
+
+                <div class="notes-section">
+                    <label for="adminNotes">หมายเหตุ:</label>
+                    <textarea id="adminNotes" rows="3" placeholder="เพิ่มหมายเหตุ..."></textarea>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button id="saveBtn" class="save-btn">💾 บันทึก</button>
+                <button onclick="closeModal()" class="cancel-btn">ยกเลิก</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin-final.js"></script>
+</body>
+</html>

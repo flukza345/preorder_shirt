@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สั่งซื้อเสื้อ Pre-order 2026</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>สั่งซื้อเสื้อ Pre-order 2026</h1>
+        
+        <form id="orderForm">
+            <!-- เลือกแบบเสื้อ -->
+            <div class="section">
+                <h2>เลือกแบบเสื้อ</h2>
+                <div class="shirt-selection">
+                    <div class="shirt-card" data-shirt="Corp">
+                        <div class="shirt-header">
+                            <img src="Image/Corp.png" alt="Corp">
+                            <h3>Corp</h3>
+                            <label class="toggle-switch">
+                                <input type="checkbox" class="shirt-toggle" data-shirt="Corp">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="shirt-options" style="display: none;">
+                            <div class="size-quantity-grid">
+                                <div class="size-row">
+                                    <span>3XS (30"):</span>
+                                    <input type="number" class="quantity-input" data-shirt="Corp" data-size="3XS" min="0" max="10" value="0">
+                                </div>
+                                <div class="size-row">
+                                    <span>2XS (32"):</span>
+                                    <input type="number" class="quantity-input" data-shirt="Corp" data-size="2XS" min="0" max="10" value="0">
+                                </div>
+                                <div class="size-row">
+                                    <span>XS (34"):</span>
+                                    <input type="number" class="quantity-input" data-shirt="Corp" data-size="XS" min="0" max="10" value="0">
+                                </div>
+                                <div class="size-row">
+                                    <span>S (36"):</span>
+                                    <input type="number" class="quantity-input" data-shirt="Corp" data-size="S" min="0" max="10" value="0">
+                                </div>
+                                <div class="size-row">
+                                    <span>M (38"):</span>
+                                    <input type="number" class="quantity-input" data-shirt="Corp" data-size="M" min="0" max="10" value="0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="shirt-card" data-shirt="Klam">
+                        <div class="shirt-header">
+                            <img src="Image/klam.png" alt="Klam">
+                            <h3>Klam</h3>
+                            <label class="toggle-switch">
+                                <input type="checkbox" class="shirt-toggle" data-shirt="Klam">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="shirt-options" style="display: none;">
+                            <div class="size-quantity-grid">
+                                <div class="size-row">
+                                    <span>XS (34"):</span>
+                                    <input type="number" class="quantity-input" data-shirt="Klam" data-size="XS" min="0" max="10" value="0">
+                                </div>
+                                <div class="size-row">
+                                    <span>S (36"):</span>
+                                    <input type="number" class="quantity-input" data-shirt="Klam" data-size="S" min="0" max="10" value="0">
+                                </div>
+                                <div class="size-row">
+                                    <span>M (38"):</span>
+                                    <input type="number" class="quantity-input" data-shirt="Klam" data-size="M" min="0" max="10" value="0">
+                                </div>
+                                <div class="size-row">
+                                    <span>L (40"):</span>
+                                    <input type="number" class="quantity-input" data-shirt="Klam" data-size="L" min="0" max="10" value="0">
+                                </div>
+                                <div class="size-row">
+                                    <span>XL (42"):</span>
+                                    <input type="number" class="quantity-input" data-shirt="Klam" data-size="XL" min="0" max="10" value="0">
+                                </div>
+                                <div class="size-row">
+                                    <span>2XL (44"):</span>
+                                    <input type="number" class="quantity-input" data-shirt="Klam" data-size="2XL" min="0" max="10" value="0">
+                                </div>
+                                <div class="size-row">
+                                    <span>3XL (46"):</span>
+                                    <input type="number" class="quantity-input" data-shirt="Klam" data-size="3XL" min="0" max="10" value="0">
+                                </div>
+                                <div class="size-row">
+                                    <span>4XL (48"):</span>
+                                    <input type="number" class="quantity-input" data-shirt="Klam" data-size="4XL" min="0" max="10" value="0">
+                                </div>
+                                <div class="size-row">
+                                    <span>5XL (50"):</span>
+                                    <input type="number" class="quantity-input" data-shirt="Klam" data-size="5XL" min="0" max="10" value="0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="shirt-card" data-shirt="Kud">
+                        <div class="shirt-header">
+                            <img src="Image/kud.png" alt="Kud">
+                            <h3>Kud</h3>
+                            <label class="toggle-switch">
+                                <input type="checkbox" class="shirt-toggle" data-shirt="Kud">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="shirt-options" style="display: none;">
+                            <div class="size-quantity-grid">
+                                <div class="size-row">
+                                    <span>XS (34"):</span>
+                                    <input type="number" class="quantity-input" data-shirt="Kud" data-size="XS" min="0" max="10" value="0">
+                                </div>
+                                <div class="size-row">
+                                    <span>S (36"):</span>
+                                    <input type="number" class="quantity-input" data-shirt="Kud" data-size="S" min="0" max="10" value="0">
+                                </div>
+                                <div class="size-row">
+                                    <span>M (38"):</span>
+                                    <input type="number" class="quantity-input" data-shirt="Kud" data-size="M" min="0" max="10" value="0">
+                                </div>
+                                <div class="size-row">
+                                    <span>L (40"):</span>
+                                    <input type="number" class="quantity-input" data-shirt="Kud" data-size="L" min="0" max="10" value="0">
+                                </div>
+                                <div class="size-row">
+                                    <span>XL (42"):</span>
+                                    <input type="number" class="quantity-input" data-shirt="Kud" data-size="XL" min="0" max="10" value="0">
+                                </div>
+                                <div class="size-row">
+                                    <span>2XL (44"):</span>
+                                    <input type="number" class="quantity-input" data-shirt="Kud" data-size="2XL" min="0" max="10" value="0">
+                                </div>
+                                <div class="size-row">
+                                    <span>3XL (46"):</span>
+                                    <input type="number" class="quantity-input" data-shirt="Kud" data-size="3XL" min="0" max="10" value="0">
+                                </div>
+                                <div class="size-row">
+                                    <span>4XL (48"):</span>
+                                    <input type="number" class="quantity-input" data-shirt="Kud" data-size="4XL" min="0" max="10" value="0">
+                                </div>
+                                <div class="size-row">
+                                    <span>5XL (50"):</span>
+                                    <input type="number" class="quantity-input" data-shirt="Kud" data-size="5XL" min="0" max="10" value="0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="shirt-card" data-shirt="Tshirt">
+                        <div class="shirt-header">
+                            <img src="Image/Tshirt.png" alt="T-shirt">
+                            <h3>T-shirt</h3>
+                            <label class="toggle-switch">
+                                <input type="checkbox" class="shirt-toggle" data-shirt="Tshirt">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="shirt-options" style="display: none;">
+                            <div class="size-quantity-grid">
+                                <div class="size-row">
+                                    <span>XS (34"):</span>
+                                    <input type="number" class="quantity-input" data-shirt="Tshirt" data-size="XS" min="0" max="10" value="0">
+                                </div>
+                                <div class="size-row">
+                                    <span>S (36"):</span>
+                                    <input type="number" class="quantity-input" data-shirt="Tshirt" data-size="S" min="0" max="10" value="0">
+                                </div>
+                                <div class="size-row">
+                                    <span>M (38"):</span>
+                                    <input type="number" class="quantity-input" data-shirt="Tshirt" data-size="M" min="0" max="10" value="0">
+                                </div>
+                                <div class="size-row">
+                                    <span>L (40"):</span>
+                                    <input type="number" class="quantity-input" data-shirt="Tshirt" data-size="L" min="0" max="10" value="0">
+                                </div>
+                                <div class="size-row">
+                                    <span>XL (42"):</span>
+                                    <input type="number" class="quantity-input" data-shirt="Tshirt" data-size="XL" min="0" max="10" value="0">
+                                </div>
+                                <div class="size-row">
+                                    <span>2XL (44"):</span>
+                                    <input type="number" class="quantity-input" data-shirt="Tshirt" data-size="2XL" min="0" max="10" value="0">
+                                </div>
+                                <div class="size-row">
+                                    <span>3XL (46"):</span>
+                                    <input type="number" class="quantity-input" data-shirt="Tshirt" data-size="3XL" min="0" max="10" value="0">
+                                </div>
+                                <div class="size-row">
+                                    <span>4XL (48"):</span>
+                                    <input type="number" class="quantity-input" data-shirt="Tshirt" data-size="4XL" min="0" max="10" value="0">
+                                </div>
+                                <div class="size-row">
+                                    <span>5XL (50"):</span>
+                                    <input type="number" class="quantity-input" data-shirt="Tshirt" data-size="5XL" min="0" max="10" value="0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- สรุปคำสั่งซื้อ -->
+            <div class="section">
+                <h2>สรุปคำสั่งซื้อ</h2>
+                <div id="orderSummary" class="order-summary">
+                    <p>กรุณาเลือกเสื้อที่ต้องการสั่งซื้อ</p>
+                </div>
+            </div>
+
+            <!-- ข้อมูลผู้สั่งซื้อ -->
+            <div class="section">
+                <h2>ข้อมูลผู้สั่งซื้อ</h2>
+                <input type="text" id="customerName" name="customerName" placeholder="ชื่อ-นามสกุล" required>
+            </div>
+
+            <button type="submit" id="submitBtn">สั่งซื้อ</button>
+        </form>
+
+        <div id="loading" class="hidden">กำลังบันทึกข้อมูล...</div>
+        <div id="success" class="hidden">บันทึกข้อมูลเรียบร้อยแล้ว!</div>
+        
+        <!-- Popup สำหรับแสดงสถานะการสั่งซื้อ -->
+        <div id="orderPopup" class="popup-overlay hidden">
+            <div class="popup-content">
+                <div class="popup-header">
+                    <h2>✅ สั่งซื้อสำเร็จ!</h2>
+                    <button class="close-popup" onclick="closeOrderPopup()">&times;</button>
+                </div>
+                <div class="popup-body">
+                    <div id="orderDetails"></div>
+                </div>
+                <div class="popup-footer">
+                    <button class="btn-primary" onclick="closeOrderPopup()">ตกลง</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
