@@ -34,7 +34,12 @@ header h1 {
     font-size: 1.8rem;
 }
 
-.refresh-btn {
+header div {
+    display: flex;
+    gap: 10px;
+}
+
+.refresh-btn, .report-btn {
     background: #3498db;
     color: white;
     border: none;
@@ -45,8 +50,16 @@ header h1 {
     transition: background 0.3s;
 }
 
+.report-btn {
+    background: #27ae60;
+}
+
 .refresh-btn:hover {
     background: #2980b9;
+}
+
+.report-btn:hover {
+    background: #229954;
 }
 
 .stats-section {
@@ -172,12 +185,88 @@ header h1 {
 .order-item {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     padding: 8px 0;
     border-bottom: 1px solid #f0f0f0;
 }
 
 .order-item:last-child {
     border-bottom: none;
+}
+
+.edit-item-btn {
+    background: #f39c12;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    margin-left: 10px;
+}
+
+.edit-item-btn:hover {
+    background: #e67e22;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #bdc3c7;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+.report-table th,
+.report-table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+
+.report-table th {
+    background: #2c3e50;
+    color: white;
+    font-weight: bold;
+}
+
+.report-table tr:nth-child(even) {
+    background: #f8f9fa;
+}
+
+.report-table tr:hover {
+    background: #e8f4f8;
+}
+
+.report-summary {
+    background: #e8f4f8;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.report-summary h3 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+@media print {
+    .modal-footer {
+        display: none;
+    }
+    .close {
+        display: none;
+    }
 }
 
 .order-actions {

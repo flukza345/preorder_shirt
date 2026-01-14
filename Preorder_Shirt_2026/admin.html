@@ -10,7 +10,10 @@
     <div class="container">
         <header>
             <h1>🛠️ Admin Panel - จัดการคำสั่งซื้อ</h1>
-            <button id="refreshBtn" class="refresh-btn">🔄 รีเฟรชข้อมูล</button>
+            <div>
+                <button id="reportBtn" class="report-btn">📋 สร้างรายงาน</button>
+                <button id="refreshBtn" class="refresh-btn">🔄 รีเฟรชข้อมูล</button>
+            </div>
         </header>
 
         <div class="stats-section">
@@ -73,12 +76,6 @@
                     </select>
                 </div>
 
-                <div class="evidence-upload">
-                    <label for="evidenceFile">แนบหลักฐานการชำระเงิน:</label>
-                    <input type="file" id="evidenceFile" accept="image/*,.pdf">
-                    <div id="currentEvidence"></div>
-                </div>
-
                 <div class="notes-section">
                     <label for="adminNotes">หมายเหตุ:</label>
                     <textarea id="adminNotes" rows="3" placeholder="เพิ่มหมายเหตุ..."></textarea>
@@ -92,6 +89,56 @@
         </div>
     </div>
 
-    <script src="admin-final.js"></script>
+    <!-- Modal สำหรับแก้ไขรายการ -->
+    <div id="editModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditModal()">&times;</span>
+            <h2>แก้ไขรายการสินค้า</h2>
+            
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="editSize">ขนาด:</label>
+                    <select id="editSize">
+                        <option value="S">S</option>
+                        <option value="M">M</option>
+                        <option value="L">L</option>
+                        <option value="XL">XL</option>
+                        <option value="2XL">2XL</option>
+                        <option value="3XL">3XL</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="editQuantity">จำนวน:</label>
+                    <input type="number" id="editQuantity" min="1" value="1">
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button id="saveEditBtn" class="save-btn">💾 บันทึก</button>
+                <button onclick="closeEditModal()" class="cancel-btn">ยกเลิก</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal สำหรับรายงาน -->
+    <div id="reportModal" class="modal hidden">
+        <div class="modal-content" style="max-width: 900px;">
+            <span class="close" onclick="closeReportModal()">&times;</span>
+            <h2>📋 รายงานสรุปการสั่งซื้อ</h2>
+            
+            <div class="modal-body">
+                <div id="reportContent"></div>
+            </div>
+
+            <div class="modal-footer">
+                <button onclick="exportReport()" class="save-btn">💾 Export รายงาน</button>
+                <button onclick="closeReportModal()" class="cancel-btn">ปิด</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="admin-script.js"></script>
 </body>
 </html>
