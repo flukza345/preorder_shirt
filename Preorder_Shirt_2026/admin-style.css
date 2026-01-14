@@ -253,6 +253,8 @@ header div {
     padding: 15px;
     border-radius: 8px;
     margin-bottom: 20px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .report-summary h3 {
