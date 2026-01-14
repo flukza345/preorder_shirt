@@ -376,16 +376,20 @@ function generateReport() {
     const summary = {};
     const notesMap = new Map();
     const typeTotal = {};
+    const allSizes = new Set();
     
     allOrders.forEach(order => {
         const typeName = getShirtTypeName(order.shirtType);
-        const key = `${typeName}_${order.size}`;
+        const size = order.size;
+        const key = `${typeName}_${size}`;
         const qty = parseInt(order.quantity);
+        
+        allSizes.add(size);
         
         if (!summary[key]) {
             summary[key] = {
                 shirtType: typeName,
-                size: order.size,
+                size: size,
                 quantity: 0
             };
         }
@@ -401,14 +405,17 @@ function generateReport() {
         }
     });
     
-    const sortedSummary = Object.values(summary).sort((a, b) => {
-        if (a.shirtType !== b.shirtType) {
-            return a.shirtType.localeCompare(b.shirtType, 'th');
-        }
-        const sizeOrder = ['S', 'M', 'L', 'XL', '2XL', '3XL'];
-        return sizeOrder.indexOf(a.size) - sizeOrder.indexOf(b.size);
+    const sizeOrder = Array.from(allSizes).sort((a, b) => {
+        const order = ['2XS', 'XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL', '6XL'];
+        const aIndex = order.indexOf(a.toUpperCase());
+        const bIndex = order.indexOf(b.toUpperCase());
+        if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;
+        if (aIndex !== -1) return -1;
+        if (bIndex !== -1) return 1;
+        return a.localeCompare(b);
     });
     
+    const sortedTypes = Object.keys(typeTotal).sort((a, b) => a.localeCompare(b, 'th'));
     const totalQuantity = allOrders.reduce((sum, o) => sum + parseInt(o.quantity), 0);
     
     let html = '<div class="report-summary">';
@@ -418,25 +425,33 @@ function generateReport() {
     html += '</div>';
     
     html += '<table class="report-table">';
-    html += '<thead><tr><th>ประเภทเสื้อ</th><th>ไซส์</th><th>จำนวน (ตัว)</th></tr></thead>';
+    html += '<thead><tr><th>ประเภทเสื้อ</th>';
+    sizeOrder.forEach(size => {
+        html += `<th>${size}</th>`;
+    });
+    html += '<th>รวม</th></tr></thead>';
     html += '<tbody>';
     
-    let currentType = '';
-    sortedSummary.forEach(item => {
-        if (currentType !== item.shirtType) {
-            if (currentType !== '') {
-                html += `<tr style="background: #e8f4f8; font-weight: bold;"><td colspan="2">รวม ${currentType}</td><td>${typeTotal[currentType]}</td></tr>`;
-            }
-            currentType = item.shirtType;
-        }
-        html += `<tr><td>${item.shirtType}</td><td>${item.size}</td><td>${item.quantity}</td></tr>`;
+    sortedTypes.forEach(type => {
+        html += `<tr><td><strong>${type}</strong></td>`;
+        sizeOrder.forEach(size => {
+            const key = `${type}_${size}`;
+            const qty = summary[key] ? summary[key].quantity : 0;
+            html += `<td>${qty > 0 ? qty : '-'}</td>`;
+        });
+        html += `<td style="background: #e8f4f8; font-weight: bold;">${typeTotal[type]}</td></tr>`;
     });
     
-    if (currentType !== '') {
-        html += `<tr style="background: #e8f4f8; font-weight: bold;"><td colspan="2">รวม ${currentType}</td><td>${typeTotal[currentType]}</td></tr>`;
-    }
-    
-    html += `<tr style="background: #2c3e50; color: white; font-weight: bold;"><td colspan="2">รวมทั้งหมด</td><td>${totalQuantity}</td></tr>`;
+    html += '<tr style="background: #2c3e50; color: white; font-weight: bold;"><td>รวมทั้งหมด</td>';
+    sizeOrder.forEach(size => {
+        let sizeTotal = 0;
+        sortedTypes.forEach(type => {
+            const key = `${type}_${size}`;
+            if (summary[key]) sizeTotal += summary[key].quantity;
+        });
+        html += `<td>${sizeTotal > 0 ? sizeTotal : '-'}</td>`;
+    });
+    html += `<td>${totalQuantity}</td></tr>`;
     html += '</tbody></table>';
     
     if (notesMap.size > 0) {
@@ -467,10 +482,27 @@ async function exportReport() {
     try {
         const canvas = await html2canvas(reportContent, {
             backgroundColor: '#ffffff',
-            scale: 2
+            scale: 2,
+            logging: false,
+            useCORS: true,
+            allowTaint: true,
+            scrollY: -window.scrollY,
+            scrollX: -window.scrollX,
+            width: reportContent.scrollWidth,
+            height: reportContent.scrollHeight
         });
         
-        canvas.toBlob(function(blob) {
+        const finalCanvas = document.createElement('canvas');
+        const padding = 40;
+        finalCanvas.width = canvas.width + (padding * 2);
+        finalCanvas.height = canvas.height + (padding * 2);
+        
+        const ctx = finalCanvas.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+        ctx.drawImage(canvas, padding, padding);
+        
+        finalCanvas.toBlob(function(blob) {
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
