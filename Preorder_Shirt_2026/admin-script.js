@@ -1,5 +1,5 @@
 // Google Apps Script Web App URL - ใช้ URL เดียวกับหน้าลูกค้า
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzX1FN8SmjPB7MzFmd20Tm-eRHqWRfwrsu_UmBXlG_yZ_udQvUrAUS9YdQn53qsEWRR/exec';
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxK0njrxx348Roh0NArRBNLcLfoh_LCWv9SHABn4lldB5_HOOj_k-Iez0Flq59_Ch6_/exec';
 
 let allOrders = [];
 let currentOrderId = null;
@@ -78,8 +78,11 @@ function displayOrders(orders) {
                         <h3>${firstOrder.customerName}</h3>
                         <div class="order-date">วันที่สั่ง: ${firstOrder.orderDate}</div>
                     </div>
-                    <div class="status-badge status-${getStatusClass(firstOrder.paymentStatus || 'รอชำระเงิน')}">
-                        ${firstOrder.paymentStatus || 'รอชำระเงิน'}
+                    <div>
+                        <div class="status-badge status-${getStatusClass(firstOrder.paymentStatus || 'รอชำระเงิน')}">
+                            ${firstOrder.paymentStatus || 'รอชำระเงิน'}
+                        </div>
+                        ${firstOrder.receivedStatus === 'รับแล้ว' ? '<div class="status-badge" style="background: #27ae60; margin-top: 5px;">✓ รับเสื้อแล้ว</div>' : ''}
                     </div>
                 </div>
                 <div class="order-body">
@@ -149,11 +152,13 @@ function updateStats() {
     const total = allOrders.length;
     const pending = allOrders.filter(order => !order.paymentStatus || order.paymentStatus === 'รอชำระเงิน').length;
     const paid = allOrders.filter(order => order.paymentStatus === 'ชำระแล้ว').length;
+    const received = allOrders.filter(order => order.receivedStatus === 'รับแล้ว').length;
     const totalQuantity = allOrders.reduce((sum, order) => sum + parseInt(order.quantity), 0);
     
     document.getElementById('totalOrders').textContent = total;
     document.getElementById('pendingOrders').textContent = pending;
     document.getElementById('paidOrders').textContent = paid;
+    document.getElementById('receivedOrders').textContent = received;
     document.getElementById('totalQuantity').textContent = `${totalQuantity} ตัว`;
     
     // สรุปยอดแต่ละแบบ
@@ -228,6 +233,7 @@ function openUpdateModal(orderKey) {
     orderInfo.innerHTML = orderInfoHTML;
     
     document.getElementById('paymentStatus').value = firstOrder.paymentStatus || 'รอชำระเงิน';
+    document.getElementById('receivedStatus').checked = firstOrder.receivedStatus === 'รับแล้ว';
     document.getElementById('adminNotes').value = firstOrder.adminNotes || '';
     
     document.getElementById('updateModal').classList.remove('hidden');
@@ -321,6 +327,7 @@ async function saveOrderUpdate() {
     if (!currentOrderId) return;
     
     const paymentStatus = document.getElementById('paymentStatus').value;
+    const receivedStatus = document.getElementById('receivedStatus').checked ? 'รับแล้ว' : 'ยังไม่รับ';
     const adminNotes = document.getElementById('adminNotes').value;
     
     const saveBtn = document.getElementById('saveBtn');
@@ -332,6 +339,7 @@ async function saveOrderUpdate() {
             action: 'updateOrder',
             orderKey: currentOrderId,
             paymentStatus: paymentStatus,
+            receivedStatus: receivedStatus,
             adminNotes: adminNotes
         };
         
