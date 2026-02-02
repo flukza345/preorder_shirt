@@ -180,7 +180,12 @@ function getOrdersFromSheet() {
     if (data.length <= 1) {
       return ContentService
         .createTextOutput(JSON.stringify({success: true, orders: []}))
-        .setMimeType(ContentService.MimeType.JSON);
+        .setMimeType(ContentService.MimeType.JSON)
+        .setHeaders({
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST',
+          'Access-Control-Allow-Headers': 'Content-Type'
+        });
     }
     
     const orders = [];

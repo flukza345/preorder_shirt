@@ -1,5 +1,5 @@
 // Google Apps Script Web App URL - ใช้ URL เดียวกับหน้าลูกค้า
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxK0njrxx348Roh0NArRBNLcLfoh_LCWv9SHABn4lldB5_HOOj_k-Iez0Flq59_Ch6_/exec';
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz_dg2VOk_Eghbdf8lwrBICDeLdOcHv3FFE5wSujhNNNgzIijLGGBsDS_aJeBRMsWBQ/exec';
 
 let allOrders = [];
 let currentOrderId = null;
@@ -37,7 +37,15 @@ async function loadOrders() {
     container.innerHTML = '';
     
     try {
-        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getOrders`);
+        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getOrders`, {
+            method: 'GET',
+            redirect: 'follow'
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         const data = await response.json();
         
         if (data.success) {
@@ -49,7 +57,7 @@ async function loadOrders() {
         }
     } catch (error) {
         console.error('Error loading orders:', error);
-        container.innerHTML = `<div class="error">เกิดข้อผิดพลาด: ${error.message}</div>`;
+        container.innerHTML = `<div class="error">เกิดข้อผิดพลาด: ${error.message}<br><br>กรุณาตรวจสอบ:<br>1. Deploy Google Apps Script version ใหม่แล้วหรือยัง<br>2. URL ถูกต้องหรือไม่<br>3. Execute as: Me, Who has access: Anyone</div>`;
     } finally {
         loading.style.display = 'none';
     }
