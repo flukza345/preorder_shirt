@@ -7,34 +7,44 @@ const SPREADSHEET_ID = '1uyZUQBIDR_BRVJ6-ArBISmpvkvLtKWNiFBWsT3xQgF4';
 function doGet(e) {
   try {
     const action = e.parameter.action;
+    const callback = e.parameter.callback;
+    
+    let result;
     
     if (action === 'getOrders') {
-      return getOrdersFromSheet();
+      result = getOrdersFromSheet();
+    } else if (action === 'updateOrder') {
+      result = updateOrderStatus(e);
+    } else {
+      result = ContentService
+        .createTextOutput(JSON.stringify({success: false, message: 'Invalid action'}))
+        .setMimeType(ContentService.MimeType.JSON);
     }
     
-    if (action === 'updateOrder') {
-      return updateOrderStatus(e);
+    // ถ้ามี callback parameter ให้คืนค่าแบบ JSONP
+    if (callback) {
+      const jsonData = result.getContent();
+      return ContentService
+        .createTextOutput(callback + '(' + jsonData + ')')
+        .setMimeType(ContentService.MimeType.JAVASCRIPT);
     }
     
-    return ContentService
-      .createTextOutput(JSON.stringify({success: false, message: 'Invalid action'}))
-      .setMimeType(ContentService.MimeType.JSON)
-      .setHeaders({
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST',
-        'Access-Control-Allow-Headers': 'Content-Type'
-      });
+    return result;
       
   } catch (error) {
     console.error('Error in doGet:', error);
+    const errorResponse = JSON.stringify({success: false, message: error.toString()});
+    const callback = e.parameter.callback;
+    
+    if (callback) {
+      return ContentService
+        .createTextOutput(callback + '(' + errorResponse + ')')
+        .setMimeType(ContentService.MimeType.JAVASCRIPT);
+    }
+    
     return ContentService
-      .createTextOutput(JSON.stringify({success: false, message: error.toString()}))
-      .setMimeType(ContentService.MimeType.JSON)
-      .setHeaders({
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST',
-        'Access-Control-Allow-Headers': 'Content-Type'
-      });
+      .createTextOutput(errorResponse)
+      .setMimeType(ContentService.MimeType.JSON);
   }
 }
 
@@ -180,12 +190,7 @@ function getOrdersFromSheet() {
     if (data.length <= 1) {
       return ContentService
         .createTextOutput(JSON.stringify({success: true, orders: []}))
-        .setMimeType(ContentService.MimeType.JSON)
-        .setHeaders({
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'GET, POST',
-          'Access-Control-Allow-Headers': 'Content-Type'
-        });
+        .setMimeType(ContentService.MimeType.JSON);
     }
     
     const orders = [];
@@ -207,23 +212,13 @@ function getOrdersFromSheet() {
     
     return ContentService
       .createTextOutput(JSON.stringify({success: true, orders: orders}))
-      .setMimeType(ContentService.MimeType.JSON)
-      .setHeaders({
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST',
-        'Access-Control-Allow-Headers': 'Content-Type'
-      });
+      .setMimeType(ContentService.MimeType.JSON);
       
   } catch (error) {
     console.error('Error getting orders:', error);
     return ContentService
       .createTextOutput(JSON.stringify({success: false, message: error.toString()}))
-      .setMimeType(ContentService.MimeType.JSON)
-      .setHeaders({
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST',
-        'Access-Control-Allow-Headers': 'Content-Type'
-      });
+      .setMimeType(ContentService.MimeType.JSON);
   }
 }
 

@@ -1,5 +1,5 @@
 // Google Apps Script Web App URL - ใช้ URL เดียวกับหน้าลูกค้า
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz_dg2VOk_Eghbdf8lwrBICDeLdOcHv3FFE5wSujhNNNgzIijLGGBsDS_aJeBRMsWBQ/exec';
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby8wQTH5UB3p4g31IG0fM2HBcmidvAYA82rigubvHJRRYJ5R1-L6PT3I7sfCmN-Tg/exec';
 
 let allOrders = [];
 let currentOrderId = null;
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('saveEditBtn').addEventListener('click', saveItemEdit);
 });
 
-// โหลดข้อมูลออเดอร์
+// โหลดข้อมูลออเดอร์ด้วย JSONP เพื่อหลีกเลี่ยง CORS
 async function loadOrders() {
     const loading = document.getElementById('loading');
     const container = document.getElementById('ordersContainer');
@@ -37,16 +37,35 @@ async function loadOrders() {
     container.innerHTML = '';
     
     try {
-        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getOrders`, {
-            method: 'GET',
-            redirect: 'follow'
+        // ใช้ JSONP แทน fetch เพื่อหลีกเลี่ยง CORS
+        const data = await new Promise((resolve, reject) => {
+            const callbackName = 'jsonpCallback_' + Date.now();
+            const script = document.createElement('script');
+            
+            window[callbackName] = function(data) {
+                delete window[callbackName];
+                document.body.removeChild(script);
+                resolve(data);
+            };
+            
+            script.onerror = function() {
+                delete window[callbackName];
+                document.body.removeChild(script);
+                reject(new Error('Failed to load data'));
+            };
+            
+            script.src = `${GOOGLE_SCRIPT_URL}?action=getOrders&callback=${callbackName}`;
+            document.body.appendChild(script);
+            
+            // Timeout after 30 seconds
+            setTimeout(() => {
+                if (window[callbackName]) {
+                    delete window[callbackName];
+                    document.body.removeChild(script);
+                    reject(new Error('Request timeout'));
+                }
+            }, 30000);
         });
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
         
         if (data.success) {
             allOrders = data.orders || [];
@@ -57,7 +76,7 @@ async function loadOrders() {
         }
     } catch (error) {
         console.error('Error loading orders:', error);
-        container.innerHTML = `<div class="error">เกิดข้อผิดพลาด: ${error.message}<br><br>กรุณาตรวจสอบ:<br>1. Deploy Google Apps Script version ใหม่แล้วหรือยัง<br>2. URL ถูกต้องหรือไม่<br>3. Execute as: Me, Who has access: Anyone</div>`;
+        container.innerHTML = `<div class="error">เกิดข้อผิดพลาด: ${error.message}</div>`;
     } finally {
         loading.style.display = 'none';
     }
