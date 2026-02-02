@@ -1,5 +1,5 @@
 // Google Apps Script Web App URL - ใช้ URL เดียวกับหน้าลูกค้า
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby8wQTH5UB3p4g31IG0fM2HBcmidvAYA82rigubvHJRRYJ5R1-L6PT3I7sfCmN-Tg/exec';
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzs8MW86F5nI-zW_nmvmirZJaf2bzcG2dFUqCpWMulFidyYscbiHEtv2hePn4NqcBUV/exec';
 
 let allOrders = [];
 let currentOrderId = null;
@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('refreshBtn').addEventListener('click', loadOrders);
     document.getElementById('reportBtn').addEventListener('click', generateReport);
     document.getElementById('statusFilter').addEventListener('change', filterOrders);
+    document.getElementById('receivedFilter').addEventListener('change', filterOrders);
     document.getElementById('searchCustomer').addEventListener('input', filterOrders);
     document.getElementById('saveBtn').addEventListener('click', saveOrderUpdate);
     document.getElementById('saveEditBtn').addEventListener('click', saveItemEdit);
@@ -98,6 +99,9 @@ function displayOrders(orders) {
         const orderGroup = groupedOrders[key];
         const firstOrder = orderGroup[0];
         
+        // Debug: ดูค่า receivedStatus
+        console.log('Order:', firstOrder.customerName, 'receivedStatus:', firstOrder.receivedStatus);
+        
         html += `
             <div class="order-card">
                 <div class="order-header">
@@ -109,7 +113,9 @@ function displayOrders(orders) {
                         <div class="status-badge status-${getStatusClass(firstOrder.paymentStatus || 'รอชำระเงิน')}">
                             ${firstOrder.paymentStatus || 'รอชำระเงิน'}
                         </div>
-                        ${firstOrder.receivedStatus === 'รับแล้ว' ? '<div class="status-badge" style="background: #27ae60; margin-top: 5px;">✓ รับเสื้อแล้ว</div>' : ''}
+                        ${firstOrder.receivedStatus && firstOrder.receivedStatus !== 'ยังไม่รับ' ? '<div class="status-badge" style="background: #27ae60; margin-top: 5px;">✓ รับเสื้อแล้ว</div>' : ''}
+                    </div>
+                </div>
                     </div>
                 </div>
                 <div class="order-body">
@@ -179,7 +185,7 @@ function updateStats() {
     const total = allOrders.length;
     const pending = allOrders.filter(order => !order.paymentStatus || order.paymentStatus === 'รอชำระเงิน').length;
     const paid = allOrders.filter(order => order.paymentStatus === 'ชำระแล้ว').length;
-    const received = allOrders.filter(order => order.receivedStatus === 'รับแล้ว').length;
+    const received = allOrders.filter(order => order.receivedStatus && order.receivedStatus !== 'ยังไม่รับ').length;
     const totalQuantity = allOrders.reduce((sum, order) => sum + parseInt(order.quantity), 0);
     
     document.getElementById('totalOrders').textContent = total;
@@ -214,6 +220,7 @@ function updateStats() {
 // กรองออเดอร์
 function filterOrders() {
     const statusFilter = document.getElementById('statusFilter').value;
+    const receivedFilter = document.getElementById('receivedFilter').value;
     const searchText = document.getElementById('searchCustomer').value.toLowerCase();
     
     let filtered = allOrders;
@@ -222,6 +229,18 @@ function filterOrders() {
         filtered = filtered.filter(order => 
             (order.paymentStatus || 'รอชำระเงิน') === statusFilter
         );
+    }
+    
+    if (receivedFilter) {
+        if (receivedFilter === 'รับแล้ว') {
+            filtered = filtered.filter(order => 
+                order.receivedStatus && order.receivedStatus !== 'ยังไม่รับ'
+            );
+        } else if (receivedFilter === 'ยังไม่รับ') {
+            filtered = filtered.filter(order => 
+                !order.receivedStatus || order.receivedStatus === 'ยังไม่รับ'
+            );
+        }
     }
     
     if (searchText) {
@@ -260,7 +279,19 @@ function openUpdateModal(orderKey) {
     orderInfo.innerHTML = orderInfoHTML;
     
     document.getElementById('paymentStatus').value = firstOrder.paymentStatus || 'รอชำระเงิน';
-    document.getElementById('receivedStatus').checked = firstOrder.receivedStatus === 'รับแล้ว';
+    
+    const receivedCheckbox = document.getElementById('receivedStatus');
+    const receivedLabel = document.getElementById('receivedLabel');
+    const isReceived = firstOrder.receivedStatus && firstOrder.receivedStatus !== 'ยังไม่รับ';
+    
+    receivedCheckbox.checked = isReceived;
+    receivedLabel.textContent = isReceived ? '✓ รับเสื้อแล้ว' : 'รับเสื้อแล้ว';
+    
+    // อัพเดท label เมื่อคลิก checkbox
+    receivedCheckbox.addEventListener('change', function() {
+        receivedLabel.textContent = this.checked ? '✓ รับเสื้อแล้ว' : 'รับเสื้อแล้ว';
+    });
+    
     document.getElementById('adminNotes').value = firstOrder.adminNotes || '';
     
     document.getElementById('updateModal').classList.remove('hidden');
@@ -349,7 +380,7 @@ async function saveItemEdit() {
     }
 }
 
-// บันทึกการอัพเดท
+// บันทึกการอัพเดท (ใช้ JSONP)
 async function saveOrderUpdate() {
     if (!currentOrderId) return;
     
@@ -362,30 +393,64 @@ async function saveOrderUpdate() {
     saveBtn.textContent = 'กำลังบันทึก...';
     
     try {
-        const updateData = {
-            action: 'updateOrder',
-            orderKey: currentOrderId,
-            paymentStatus: paymentStatus,
-            receivedStatus: receivedStatus,
-            adminNotes: adminNotes
-        };
+        // หา order ที่ตรงกับ currentOrderId
+        const firstOrder = allOrders.find(order => 
+            `${order.customerName}_${order.orderDate}` === currentOrderId
+        );
         
-        const formData = new FormData();
-        formData.append('data', JSON.stringify(updateData));
+        if (!firstOrder) {
+            throw new Error('ไม่พบข้อมูลออเดอร์');
+        }
         
-        const response = await fetch(GOOGLE_SCRIPT_URL, {
-            method: 'POST',
-            body: formData
+        const customerName = firstOrder.customerName;
+        const orderDate = firstOrder.orderDate;
+        
+        console.log('Updating:', { customerName, orderDate, paymentStatus, receivedStatus });
+        
+        const data = await new Promise((resolve, reject) => {
+            const callbackName = 'jsonpCallback_' + Date.now();
+            const script = document.createElement('script');
+            
+            window[callbackName] = function(data) {
+                delete window[callbackName];
+                document.body.removeChild(script);
+                resolve(data);
+            };
+            
+            script.onerror = function() {
+                delete window[callbackName];
+                document.body.removeChild(script);
+                reject(new Error('Failed to update'));
+            };
+            
+            const params = new URLSearchParams({
+                action: 'updateOrder',
+                customerName: customerName,
+                orderDate: orderDate,
+                paymentStatus: paymentStatus,
+                receivedStatus: receivedStatus,
+                adminNotes: adminNotes,
+                callback: callbackName
+            });
+            
+            script.src = `${GOOGLE_SCRIPT_URL}?${params.toString()}`;
+            document.body.appendChild(script);
+            
+            setTimeout(() => {
+                if (window[callbackName]) {
+                    delete window[callbackName];
+                    document.body.removeChild(script);
+                    reject(new Error('Request timeout'));
+                }
+            }, 30000);
         });
         
-        const result = await response.json();
-        
-        if (result.success) {
+        if (data.success) {
             alert('อัพเดทสถานะเรียบร้อย');
             closeModal();
             loadOrders();
         } else {
-            throw new Error(result.message || 'เกิดข้อผิดพลาดในการอัพเดท');
+            throw new Error(data.message || 'เกิดข้อผิดพลาดในการอัพเดท');
         }
         
     } catch (error) {

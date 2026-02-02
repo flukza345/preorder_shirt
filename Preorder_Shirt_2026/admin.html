@@ -51,6 +51,11 @@
                 <option value="ชำระแล้ว">ชำระแล้ว</option>
                 <option value="ยกเลิก">ยกเลิก</option>
             </select>
+            <select id="receivedFilter">
+                <option value="">สถานะการรับเสื้อ</option>
+                <option value="รับแล้ว">รับเสื้อแล้ว</option>
+                <option value="ยังไม่รับ">ยังไม่ได้รับ</option>
+            </select>
             <input type="text" id="searchCustomer" placeholder="ค้นหาชื่อลูกค้า...">
         </div>
 
@@ -82,7 +87,7 @@
 
                 <div class="status-update">
                     <label>
-                        <input type="checkbox" id="receivedStatus"> รับเสื้อแล้ว
+                        <input type="checkbox" id="receivedStatus"> <span id="receivedLabel">รับเสื้อแล้ว</span>
                     </label>
                 </div>
 

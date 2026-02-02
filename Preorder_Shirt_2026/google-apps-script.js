@@ -89,21 +89,13 @@ function doPost(e) {
 
 function updateOrderStatus(e) {
   try {
-    let data;
-    if (e.parameter && e.parameter.data) {
-      data = JSON.parse(e.parameter.data);
-    } else {
-      data = e.parameter;
-    }
+    const customerName = e.parameter.customerName;
+    const orderDate = e.parameter.orderDate;
+    const paymentStatus = e.parameter.paymentStatus;
+    const receivedStatus = e.parameter.receivedStatus;
+    const adminNotes = e.parameter.adminNotes;
     
-    const orderKey = data.orderKey;
-    const paymentStatus = data.paymentStatus;
-    const receivedStatus = data.receivedStatus;
-    const adminNotes = data.adminNotes;
-    
-    const [customerName, orderDate] = orderKey.split('_');
-    
-    console.log('Updating order for customer:', customerName);
+    console.log('Received params:', { customerName, orderDate, paymentStatus, receivedStatus });
     
     const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getActiveSheet();
     const data_sheet = sheet.getDataRange().getValues();
@@ -129,17 +121,21 @@ function updateOrderStatus(e) {
     
     if (adminNotesCol === -1) {
       adminNotesCol = headers.length + (paymentStatusCol === headers.length ? 1 : 0) + (receivedStatusCol === headers.length + (paymentStatusCol === headers.length ? 1 : 0) ? 1 : 0);
-      sheet.getRange(1, adminNotesCol + 1).setValue('หมายเหตแ');
+      sheet.getRange(1, adminNotesCol + 1).setValue('หมายเหตุ');
     }
     
     let updated = false;
+    let matchLog = [];
     
     for (let i = 1; i < data_sheet.length; i++) {
       const row = data_sheet[i];
       const rowCustomer = String(row[1] || '').trim();
-      const rowDate = String(row[0] || '').trim();
+      const rowDate = row[0]; // เก็บแบบ Date object
+      const rowDateStr = rowDate instanceof Date ? rowDate.toISOString() : String(rowDate).trim();
       
-      if (rowCustomer === customerName && rowDate === orderDate) {
+      matchLog.push({ rowCustomer, rowDateStr, match: rowCustomer === customerName && rowDateStr === orderDate });
+      
+      if (rowCustomer === customerName && rowDateStr === orderDate) {
         if (paymentStatus) {
           sheet.getRange(i + 1, paymentStatusCol + 1).setValue(paymentStatus);
         }
@@ -148,7 +144,7 @@ function updateOrderStatus(e) {
           sheet.getRange(i + 1, receivedStatusCol + 1).setValue(receivedStatus);
         }
         
-        if (adminNotes !== undefined) {
+        if (adminNotes !== undefined && adminNotes !== 'undefined') {
           sheet.getRange(i + 1, adminNotesCol + 1).setValue(adminNotes);
         }
         
@@ -157,28 +153,19 @@ function updateOrderStatus(e) {
     }
     
     if (!updated) {
-      throw new Error('ไม่พบออเดอร์');
+      console.log('Match log:', JSON.stringify(matchLog));
+      throw new Error('ไม่พบออเดอร์ - ดู log ใน Google Apps Script');
     }
     
     return ContentService
       .createTextOutput(JSON.stringify({success: true, message: 'อัพเดทสำเร็จ'}))
-      .setMimeType(ContentService.MimeType.JSON)
-      .setHeaders({
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST',
-        'Access-Control-Allow-Headers': 'Content-Type'
-      });
+      .setMimeType(ContentService.MimeType.JSON);
       
   } catch (error) {
     console.error('Error updating order:', error);
     return ContentService
       .createTextOutput(JSON.stringify({success: false, message: error.toString()}))
-      .setMimeType(ContentService.MimeType.JSON)
-      .setHeaders({
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST',
-        'Access-Control-Allow-Headers': 'Content-Type'
-      });
+      .setMimeType(ContentService.MimeType.JSON);
   }
 }
 
