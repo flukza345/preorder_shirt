@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - จัดการคำสั่งซื้อเสื้อ</title>
-    <link rel="stylesheet" href="admin-style.css">
+    <link rel="stylesheet" href="admin-style.css?v=2">
 </head>
 <body>
     <div class="container">
@@ -41,7 +41,24 @@
 
         <div class="shirt-stats-section">
             <h3>📊 ยอดสั่งซื้อแต่ละแบบ</h3>
-            <div id="shirtStats" class="shirt-stats-grid"></div>
+            <div class="shirt-stats-grid">
+                <div class="shirt-stat-card">
+                    <h4>ครอป</h4>
+                    <div class="shirt-quantity">4 ตัว</div>
+                </div>
+                <div class="shirt-stat-card">
+                    <h4>เสื้อกล้าม</h4>
+                    <div class="shirt-quantity">23 ตัว</div>
+                </div>
+                <div class="shirt-stat-card">
+                    <h4>แขนกุด</h4>
+                    <div class="shirt-quantity">7 ตัว</div>
+                </div>
+                <div class="shirt-stat-card">
+                    <h4>แขนสั้น</h4>
+                    <div class="shirt-quantity">21 ตัว</div>
+                </div>
+            </div>
         </div>
 
         <div class="filters">
@@ -154,6 +171,6 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="admin-script.js"></script>
+    <script src="admin-script.js?v=2"></script>
 </body>
 </html>

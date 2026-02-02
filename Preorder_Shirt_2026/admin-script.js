@@ -194,27 +194,7 @@ function updateStats() {
     document.getElementById('receivedOrders').textContent = received;
     document.getElementById('totalQuantity').textContent = `${totalQuantity} ตัว`;
     
-    // สรุปยอดแต่ละแบบ
-    const shirtSummary = {};
-    allOrders.forEach(order => {
-        const typeName = getShirtTypeName(order.shirtType);
-        if (!shirtSummary[typeName]) {
-            shirtSummary[typeName] = 0;
-        }
-        shirtSummary[typeName] += parseInt(order.quantity);
-    });
-    
-    const shirtStatsContainer = document.getElementById('shirtStats');
-    let statsHTML = '';
-    Object.keys(shirtSummary).sort().forEach(type => {
-        statsHTML += `
-            <div class="shirt-stat-card">
-                <h4>${type}</h4>
-                <div class="shirt-quantity">${shirtSummary[type]} ตัว</div>
-            </div>
-        `;
-    });
-    shirtStatsContainer.innerHTML = statsHTML;
+    // ไม่ต้องอัพเดท shirt stats เพราะใช้ค่าคงที่แล้ว
 }
 
 // กรองออเดอร์
